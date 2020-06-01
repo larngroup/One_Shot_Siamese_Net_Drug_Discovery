@@ -40,7 +40,7 @@ This value serves as input to a sigmoid function in the last layer.
 
 ## Model Architecture
 
-![Screenshot] (rede.png)
+![Image] (rede.png)
 
 ## Pairwise Training
 
