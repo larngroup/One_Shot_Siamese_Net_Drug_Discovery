@@ -38,6 +38,10 @@ This layer learns a similarity function between two feature vectors by applying 
 Then, it is followed by a dense layer that computes the absolute difference between the two output feature maps. 
 This value serves as input to a sigmoid function in the last layer.
 
+## Model Architecture
+
+
+
 ## Pairwise Training
 
 Since the siamese net accepts pairs of molecules, the dataset size increases, as the number of possible combinations for the pairs of molecules for training increases by a quadratic factor. 
