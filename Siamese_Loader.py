@@ -59,7 +59,6 @@ class Load_Siamese:
             index_1 = rng.randint(0,n_exemplos)
             pares[0][i,:,:,:] = X[categoria,index_1].reshape(w,h,1)
             index_2 = rng.randint(0,n_exemplos)
-            #pick images of same class for 1st half, different for 2nd
             
             categoria_2 = categoria if i >= n//2 else (categoria + rng.randint(1,n_classes)) % n_classes
             pares[1][i,:,:,:] = X[categoria_2,index_2].reshape(w,h,1)
@@ -87,39 +86,45 @@ class Load_Siamese:
         targets = np.zeros((N,))
         targets[0] = 1
         
-       # print("Pares:",pares)
         return pares, targets
     
     def oneshot_test(self,model,N,k,s = "val"):
         
         """Avalia a accuracy média da rede na determinação da classe das imagens ao longo de um numero k de tasks"""
         n_corretos = 0
-    #        if verbose:
-    #            print("Evaluating model on {} unique {} way one-shot learning tasks ...".format(k,N))
+        
         for i in range(k):
             inputs, targets = self.one_shot_task(N,s)
             probs = model.predict(inputs)
             if np.argmax(probs) == 0:
                 n_corretos+=1
         percent_correct = (n_corretos / k)
-    #        if verbose:
-    #            print("Got an average of {}% {} way one-shot learning accuracy".format(percent_correct,N))
+        
         return percent_correct
       
         
     def knn_test(self,pairs,targets):
         """returns 1 if nearest neighbour gets the correct answer for a one-shot task given by (pairs, targets)"""
         L2_distances = np.zeros_like(targets)
-#        print("PARES NN:", pairs[0][1].flatten())
-        #print("PARES NN2:", pairs[1][1])
+
         for i in range(len(targets)):
             L2_distances[i] = np.sqrt(np.sum((pairs[0][i].flatten() - pairs[1][i].flatten())**2))
         if np.argmin(L2_distances) == np.argmax(targets):
             return 1
         return 0
     
+    def random_test(self, N, trials, s='val'):
+        
+        n_corretos = 0 
+        
+        for i in range(trials):
+            pairs, targets = self.one_shot_task(N,s)
+            correto = self.random_prediction(pairs,targets)
+            n_corretos += correto
+        
+        return n_corretos/ trials
     
-    def random_test(self,pairs,targets):
+    def random_prediction(self,pairs,targets):
         
         random_predictions = np.zeros_like(targets)
         
@@ -132,8 +137,6 @@ class Load_Siamese:
     def knn_prediction(self,pairs,targets):
         """returns 1 if nearest neighbour gets the correct answer for a one-shot task given by (pairs, targets)"""
         L2_distances = np.zeros_like(targets)
-#        print("PARES NN:", pairs[0][1].flatten())
-        #print("PARES NN2:", pairs[1][1])
         for i in range(len(targets)):
             L2_distances[i] = np.sqrt(np.sum((pairs[0][i].flatten() - pairs[1][i].flatten())**2))
         if np.argmin(L2_distances) == np.argmax(targets):
@@ -141,7 +144,7 @@ class Load_Siamese:
         return 0
     
     
-    def validate_cnn(self, N, trials, tam, s= 'val'):
+    def validate_cnn(self,N, trials, tam, s= 'val'):
         
         pairs_train, targets_train = self.batch_function(tam)
         
@@ -229,18 +232,18 @@ class Load_Siamese:
         verbose, epochs, batch_size = 1, 10, 50
     
         conv_model = Sequential()
-        conv_model.add(Conv1D(32,10,activation='relu', input_shape=(n_timesteps,n_features)))
+        conv_model.add(Conv1D(64,10,activation='relu', input_shape=(n_timesteps,n_features)))
         conv_model.add(MaxPooling1D())
-        conv_model.add(Conv1D(64,8,activation='relu', input_shape=(n_timesteps,n_features)))
+        conv_model.add(Conv1D(128,7,activation='relu'))
         conv_model.add(MaxPooling1D())
-        conv_model.add(Conv1D(128,4,activation='relu'))
+        conv_model.add(Conv1D(128,2,activation='relu'))
         conv_model.add(MaxPooling1D())
         conv_model.add(Conv1D(256,2,activation='relu'))
         conv_model.add(MaxPooling1D())
         conv_model.add(Dropout(0.5))
         conv_model.add(MaxPooling1D())
         conv_model.add(Flatten())
-        conv_model.add(Dense(100,activation="relu"))
+        conv_model.add(Dense(1024,activation="relu"))
         conv_model.add(Dense(n_outputs, activation='sigmoid'))
         
         conv_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -271,12 +274,6 @@ class Load_Siamese:
             pairs_train2.append(np.asarray(seq3))
         
         n_corretos = 0
-        pairs2train=np.asarray(pairs_train2).reshape(tam,54*100*2,1)
-        targets_train = np.asarray(targets_train).reshape(tam,1)
-        print(pairs2train.shape)
-        print(targets_train.shape)
-    
-    #        cnn_net= model.fit(pairs2train, targets_train, batch_size=50,epochs=20,verbose=1)
         
         lista_acc=[]
         for n in range(2,N+1):
@@ -301,23 +298,20 @@ class Load_Siamese:
                         
                     pairs_val2.append(np.asarray(seq3))
                                 
-                pairs2val=np.asarray(pairs_val2).reshape(n,54*100*2,1)
+#                pairs2val=np.asarray(pairs_val2).reshape(n,54*100*2)
                 
                 kernel = 1.0 * RBF(1.0)
                 
                 if (model == 'SVM'):
                     reg = svm.SVC(probability = True)
-                if (model == 'Random Forest'):
+                if (model == 'RF'):
                     reg = RandomForestClassifier(max_depth=2, random_state=0)
-                if (model == 'MLPClassifier'):
-                    reg = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(10,5, 2), random_state=1)
+                if (model == 'MLP'):
+                    reg = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(10,5,2), random_state=1)
      
-                reg.fit(pairs2train, targets_train)
-      
-                print(pairs2val.shape)
-                print(targets_val.shape)
+                reg.fit(pairs_train2, targets_train)
                 
-                pred = reg.predict(pairs2val)
+                pred = reg.predict_proba(pairs_val2)
                 
                 print("Target:",targets_val)
     
@@ -338,7 +332,8 @@ class Load_Siamese:
         print(lista_acc)
         
         return lista_acc
-
+        
+    
         
         
         

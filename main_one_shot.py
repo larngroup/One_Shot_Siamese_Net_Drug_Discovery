@@ -78,22 +78,18 @@ def model():
     left_output = convnet(left_input)
     right_output = convnet(right_input)
     
-    # Layer que permite obter a diferença absoluta entre os dois encodings - concatenados
+    
+    # Layer that computes the absolute difference between the output feature vectors
     L1_layer = Lambda(lambda tensors:K.abs(tensors[0] - tensors[1]))
     L1 = L1_layer([left_output, right_output])
     
-    # Dense Layer associada a uma função sigmoide que gera um similarity score
-    # gera um output entre 0 e 1 que corresponde a uma probabilidade de semelhança
+    # Dense Layer with a sigmoid function that returns the generated similarity score
+    # output between 0 and 1
     pred = Dense(1,activation='sigmoid',bias_initializer=bias)(L1)
     
     # Connect the inputs with the outputs
     net = Model(inputs=[left_input,right_input],outputs=pred)
-    #optimizer = SGD(0.0004,momentum=0.6,nesterov=True,decay=0.0003)
-       
-#    model_json = model.to_json()
-#    with open("model.json", "w") as json_file:
-#        json_file.write(model_json)
-    # return the model
+
     return net
 
 
@@ -121,7 +117,7 @@ if __name__=='__main__':
         d = i.split("$$$")
         D.append(d)
 #        print(d)
-        if len(d) > 5 and c>0 and c<1000:
+        if len(d) > 5 and c>0:
             drug_names.append(d[12])
             drug_group.append(d[2])
             drug_smiles.append(d[13])
@@ -129,8 +125,9 @@ if __name__=='__main__':
     
 
     drug_mol=[]
-    #aplicando validate_smiles(drug_smiles[1406]) verifica-se que a molecula e invalida
-    #remover todas as invalidas
+    
+    # Process the drug SMILEs Strings - selection of valid SMILEs and SMILEs grouping
+   
     for i in drug_smiles:
         if validate_smiles(i) != []:
             drug_smiles.pop(drug_smiles.index(i))
@@ -150,7 +147,6 @@ if __name__=='__main__':
     n=10
     count = 0
    
-    # experimentar diferentes métricas de semelhança 
     # Tanimoto, Dice, Cosine, Sokal, Russel, Kulczynski, McConnaughey, and Tversky.
     
     Prob = []
@@ -172,8 +168,7 @@ if __name__=='__main__':
                 data_prov.append(i)
                 Data_Final.append(Data)
                 Data_Final1.append(Data1)
- 
-    #Verificar se todos os items são diferentes
+                
     data = []
     for i in Data_Final1:
         for j in i:
@@ -181,6 +176,8 @@ if __name__=='__main__':
     
   
     print (len(data) != len(set(data)))
+    
+    # separate in train and test sets
     
     data_treino, data_teste = train_test_split([i for i in Data_Final], test_size=0.25, random_state=1)
     
@@ -195,13 +192,14 @@ if __name__=='__main__':
     evaluate_every = 100 
     loss_every = 1000
     batch_size = 50
-    n_iter = 500
-    n_val = 100 
+    n_iter = 10000
+    n_val = 500 
     best_val = -1
     best_train = -1
     best_val_knn = -1
     best_val_random = -1
-    n = 2
+    N = 2 #3,4,5,7,10
+    
 #    model_path = './weights/'
     
     loader = Load_Siamese(data_treino,data_teste)
@@ -212,9 +210,9 @@ if __name__=='__main__':
     siamese_net.compile(loss="binary_crossentropy",optimizer=opt)
     
     # Uncomment the following commands to run the models
-#    Validate_one_shot.validate(n_iter,loader, time, siamese_net,batch_size,t_start,n_val, evaluate_every, loss_every, n);
-#    Validate_knn.validate_knn(n_iter,loader, time, siamese_net,batch_size,t_start,n_val,best_val, evaluate_every, loss_every, n);
-#    Validate_random.validate_random(n_iter,loader, time, siamese_net,batch_size,t_start,n_val,best_val, evaluate_every, loss_every, n);
+#    Validate_one_shot.validate(n_iter,loader, time, siamese_net,batch_size,t_start,n_val, evaluate_every, loss_every, N);
+#    Validate_knn.validate_knn(n_iter,loader, time, siamese_net,batch_size,t_start,n_val,best_val, evaluate_every, loss_every, N);
+#    Validate_random.validate_random(n_iter,loader, time, siamese_net,batch_size,t_start,n_val,best_val, evaluate_every, loss_every, N);
     
 #    loader.validate_cnn(2, 100,len(data_treino))
 #    loader.validate_models(3, 100,len(data_treino),'RF')
