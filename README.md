@@ -18,6 +18,8 @@ The results of this study show that a one-shot-based classification using a Siam
 We used Python 3.7.3 and Keras with Tensorflow back-end to develop the main Siamese Model and the standart convolutional model (CNN). Sckit-learn was used to implement some of the other models for comparison purposes as Random Forest, SVM and Multi-Layer Perceptron.
 RDKit was used to pre-process the SMILEs Strings and acess SMILEs fingerprints.
 
+In order to get started you will need:
+
 - Keras
 - Tensorflow 1.14
 - RDKit
