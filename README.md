@@ -13,6 +13,20 @@ Using a one-shot learning strategy, we only need a few instances per class for t
 \
 The results of this study show that a one-shot-based classification using a Siamese neural network allowed us to outperform the graphical convolution and the state-of-the-art models in the accurate and reliable prediction of novel compounds given the lack of biological data available for candidate molecules in drug discovery tasks.
 
+# Requirements
+
+We used Python 3.7.3 and Keras with Tensorflow back-end to develop the main Siamese Model and the standart convolutional model (CNN). Sckit-learn was used to implement some of the other models for comparison purposes as Random Forest, SVM and Multi-Layer Perceptron.
+RDKit was used to pre-process the SMILEs Strings and acess SMILEs fingerprints.
+
+- Keras
+- Tensorflow 1.14
+- RDKit
+- Scikit-learn
+- Numpy
+- Pandas
+- molvs
+
+
 # Our Approach
 In this study, starting from a reduced set of candidate molecules, we adapt the convolutional neural network (CNN) to predict novel compounds according to the structural dissimilarities observed between molecules. The proposed model accepts different pairs of molecules and learns a similarity function which returns a similarity score between two input molecules. Thus, according to the learned similarity rule the network predicts the similarity score in one shot.
 \
