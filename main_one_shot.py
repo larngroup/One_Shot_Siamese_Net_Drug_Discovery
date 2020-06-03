@@ -47,15 +47,16 @@ def model():
     print(left_input)
     
     # Convolutional Neural Network
-    """ -> convolução com 64 filtros de 10x10;
-        -> convolução com filtros ReLU (se g(x) > 0 return value else return 0, com g a função de ativação) - ReLU activation to make all negative value to zero;
-        -> convolução com uma max-pooling layer (escolhe o valor mais elevado em sub-matrizes nxn bem definidas) - Pooling layer is used to reduce the spatial volume of input image after convolution;
-        -> convolução com 128 filtros de 7x7 + ReLU + maxpool;
-        -> convolução com 128 filtros de 2x2 + ReLU + maxpool;
-
-        -> convolução com 256 filtros 2x2;
+    """ -> conv 64 filters 10x10, ReLU;
+        -> max-pooling layer 
+        -> conv 128 filters 7x7, ReLU;
+        -> max-pooling layer 
+        -> conv 128 filters 2x2, ReLU;
+        -> max-pooling layer 
+        -> conv 256 filters 2x2, ReLU;
+        -> max-pooling layer 
         -> dropout layer - droprate= 0.5
-        -> classificação numa fully connected layer de 1024 unidades (neurónios)"""
+        -> fully connected layer - 1024 units"""
 
     #build convnet for each of the siamese twins
                                  
