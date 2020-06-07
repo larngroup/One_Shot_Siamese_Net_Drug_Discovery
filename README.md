@@ -87,8 +87,8 @@ In the implementation of those models, we provide a  set  of  drug  pairs and we
 
 | Model | #2-way  | #3-way  | #4-way | #5-way  | #7-way  | #10-way |
 | ------- | --- | --- | --- | --- | --- | --- |
-| Siamese val | 95% | 90% | 86% | 78% | 70% | 60% |
-| Siamese train | 94% | 92% | 84% | 86% | 72% | 62% |
+| Siamese val | 95% | 90% | 84% | 78% | 70% | 60% |
+| Siamese train | 94% | 92% | 86% | 84% | 72% | 62% |
 | KNN | 69% | 55% | 48% |  42% | 35% | 35% |
 | Random | 61% | 43% | 34% | 31% | 22% | 10% |
 | SVM | 56% | 42% | 24% | 30% | 16% | 12% |
