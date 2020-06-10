@@ -91,7 +91,7 @@ In the implementation of those models, we provide a  set  of  drug  pairs and we
 | Siamese train | 94% | 92% | 86% | 84% | 72% | 62% |
 | KNN | 69% | 55% | 48% |  42% | 35% | 35% |
 | Random | 61% | 43% | 34% | 31% | 22% | 10% |
-| SVM | 56% | 42% | 24% | 30% | 16% | 12% |
+| SVM | 56% | 42% | 24% | 30 | 16% | 12% |
 | Random Forest | 71% | 58% | 60% | 44% | 34% | 20% |
 | CNN |  81% | 70% | 58% | 46% | 41% | 39% |
 | MLP | 76% | 60% | 36% | 34% | 22% | 13% |
