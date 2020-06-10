@@ -122,10 +122,10 @@ class Validate_models:
                 
                 if (model == 'SVM'):
                     reg = svm.SVC(probability = True)
-                if (model == 'Random Forest'):
+                if (model == 'RandomForest'):
                     reg = RandomForestClassifier(max_depth=2, random_state=0)
                 if (model == 'MLPClassifier'):
-                    reg = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(10,5, 2), random_state=1)
+                    reg = MLPClassifier(solver='adam', alpha=1e-4,hidden_layer_sizes=(100,50,20), random_state=1)
      
                 reg.fit(pairs2train, targets_train)
       
